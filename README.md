@@ -83,7 +83,7 @@
 
 <!-- PAGES -->
 <div id="accueil" class="page active-page">
-    <div class="hero"><div class="hero-text"><h2>L'élégance au quotidien</h2><p>Livraison offerte dès 120 000 Ar.</p><button class="btn" id="heroShopBtn">Voir les produits →</button></div>
+    <div class="hero"><div class="hero-text"><h2>L'élégance au quotidien</h2><p>Livraison offerte dès 12 000 Ar.</p><button class="btn" id="heroShopBtn">Voir les produits →</button></div>
     <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=300&h=350&fit=crop" style="width:260px;border-radius:28px;"></div>
     <div class="section-title">✨ Nos coups de cœur</div><div class="grid-produits" id="accueil-highlights"></div>
 </div>
