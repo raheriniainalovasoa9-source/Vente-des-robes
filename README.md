@@ -1,4 +1,3 @@
-
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -132,14 +131,24 @@ const robes = [
 
 let panier = JSON.parse(localStorage.getItem('panier')) || [];
 
-function sauvegarderPanier() { localStorage.setItem('panier', JSON.stringify(panier)); miseAJourAffichagePanier(); miseAJourCompteur(); }
+function sauvegarderPanier() { 
+    localStorage.setItem('panier', JSON.stringify(panier)); 
+    miseAJourAffichagePanier(); 
+    miseAJourCompteur(); 
+}
 
-function miseAJourCompteur() { document.getElementById('cartCount').innerText = panier.reduce((s,item)=> s+item.quantite, 0); }
+function miseAJourCompteur() { 
+    document.getElementById('cartCount').innerText = panier.reduce((s,item)=> s+item.quantite, 0); 
+}
 
 function miseAJourAffichagePanier() {
     const container = document.getElementById('cartItems');
     const totalSpan = document.getElementById('cartTotal');
-    if(panier.length === 0) { container.innerHTML = '<p style="text-align:center;color:#999;">Votre panier est vide</p>'; totalSpan.innerText = 'Total: 0 Ar'; return; }
+    if(panier.length === 0) { 
+        container.innerHTML = '<p style="text-align:center;color:#999;">Votre panier est vide</p>'; 
+        totalSpan.innerText = 'Total: 0 Ar'; 
+        return; 
+    }
     let html = '', total = 0;
     panier.forEach(item => {
         total += item.prixAr * item.quantite;
@@ -147,7 +156,9 @@ function miseAJourAffichagePanier() {
     });
     container.innerHTML = html;
     totalSpan.innerText = `Total: ${total.toLocaleString('fr-MG')} Ar`;
-    document.querySelectorAll('.remove-item').forEach(btn => btn.addEventListener('click', (e) => { supprimerDuPanier(parseInt(btn.dataset.id)); }));
+    document.querySelectorAll('.remove-item').forEach(btn => btn.addEventListener('click', (e) => { 
+        supprimerDuPanier(parseInt(btn.dataset.id)); 
+    }));
 }
 
 function ajouterAuPanier(robe) {
@@ -158,39 +169,93 @@ function ajouterAuPanier(robe) {
     toastMsg(`✨ ${robe.nom} ajoutée au panier`);
 }
 
-function supprimerDuPanier(id) { panier = panier.filter(p => p.id !== id); sauvegarderPanier(); toastMsg('Article retiré'); }
+function supprimerDuPanier(id) { 
+    panier = panier.filter(p => p.id !== id); 
+    sauvegarderPanier(); 
+    toastMsg('Article retiré'); 
+}
 
-function toastMsg(msg) { const t = document.getElementById('toastMsg'); t.textContent = msg; t.style.opacity = '1'; setTimeout(()=> t.style.opacity='0', 2000); }
+function toastMsg(msg) { 
+    const t = document.getElementById('toastMsg'); 
+    t.textContent = msg; 
+    t.style.opacity = '1'; 
+    setTimeout(()=> t.style.opacity='0', 2000); 
+}
 
-function genererCarte(r) { return `<div class="carte-robe"><img src="${r.image}" alt="${r.nom}"><h3>${r.nom}</h3><div class="prix">${r.prixAr.toLocaleString('fr-MG')} Ar</div><button class="btn-acheter" data-id="${r.id}" data-nom="${r.nom}" data-prix="${r.prixAr}">Ajouter au panier 🛒</button></div>`; }
+function genererCarte(r) { 
+    return `<div class="carte-robe"><img src="${r.image}" alt="${r.nom}"><h3>${r.nom}</h3><div class="prix">${r.prixAr.toLocaleString('fr-MG')} Ar</div><button class="btn-acheter" data-id="${r.id}" data-nom="${r.nom}" data-prix="${r.prixAr}">Ajouter au panier 🛒</button></div>`; 
+}
 
-function afficherHighlights() { document.getElementById('accueil-highlights').innerHTML = robes.filter(r=>r.highlight).map(genererCarte).join(''); }
-function afficherTous() { document.getElementById('all-products-grid').innerHTML = robes.map(genererCarte).join(''); }
-function afficherOffres() { document.getElementById('offre-produits').innerHTML = robes.filter(r=>r.offre).map(genererCarte).join(''); }
+function afficherHighlights() { 
+    document.getElementById('accueil-highlights').innerHTML = robes.filter(r=>r.highlight).map(genererCarte).join(''); 
+}
+function afficherTous() { 
+    document.getElementById('all-products-grid').innerHTML = robes.map(genererCarte).join(''); 
+}
+function afficherOffres() { 
+    document.getElementById('offre-produits').innerHTML = robes.filter(r=>r.offre).map(genererCarte).join(''); 
+}
 
-function attacherEvents() { document.querySelectorAll('.btn-acheter').forEach(btn => { btn.removeEventListener('click', handler); btn.addEventListener('click', handler); }); }
-function handler(e) { const id = parseInt(e.currentTarget.dataset.id); const robe = robes.find(r=>r.id===id); if(robe) ajouterAuPanier(robe); }
+function attacherEvents() { 
+    document.querySelectorAll('.btn-acheter').forEach(btn => { 
+        btn.removeEventListener('click', handler); 
+        btn.addEventListener('click', handler); 
+    }); 
+}
+function handler(e) { 
+    const id = parseInt(e.currentTarget.dataset.id); 
+    const robe = robes.find(r=>r.id===id); 
+    if(robe) ajouterAuPanier(robe); 
+}
 
 // Générer le message WhatsApp avec le récapitulatif de la commande
 function genererMessageWhatsApp() {
     if(panier.length === 0) return null;
-    let message = "🛍️ *MA COMMANDE Robe & Élégance* 🛍️%0A%0A";
+    let message = "🛍️ *MA COMMANDE Robe & Élégance* 🛍️\n\n";
     let total = 0;
     panier.forEach(item => {
         const prixTotalItem = item.prixAr * item.quantite;
         total += prixTotalItem;
-        message += `▪️ ${item.nom} x${item.quantite} : ${prixTotalItem.toLocaleString('fr-MG')} Ar%0A`;
+        message += `▪️ ${item.nom} x${item.quantite} : ${prixTotalItem.toLocaleString('fr-MG')} Ar\n`;
     });
-    message += `%0A📦 *TOTAL : ${total.toLocaleString('fr-MG')} Ar*%0A%0A`;
-    message += `📍 Livraison : Madagascar%0A`;
-    message += `💬 Merci de confirmer ma commande !%0A`;
+    message += `\n📦 *TOTAL : ${total.toLocaleString('fr-MG')} Ar*\n\n`;
+    message += `📍 Livraison : Madagascar\n`;
+    message += `💬 Merci de confirmer ma commande !\n`;
+    message += `\n📞 Mon numéro : `;
     return message;
 }
 
-// Bouton de commande normal (simulation)
+// Fonction pour commander via WhatsApp
+function commanderViaWhatsApp() {
+    if(panier.length === 0) { 
+        toastMsg('Votre panier est vide'); 
+        return; 
+    }
+    
+    const message = genererMessageWhatsApp();
+    if(message) {
+        const numeroWhatsApp = "261341234567";
+        // Encoder le message pour URL
+        const messageEncoded = encodeURIComponent(message);
+        const url = `https://wa.me/${numeroWhatsApp}?text=${messageEncoded}`;
+        
+        // Ouvrir WhatsApp dans un nouvel onglet
+        window.open(url, '_blank');
+        toastMsg('🟢 Redirection vers WhatsApp...');
+        
+        // Optionnel : Fermer le panier après 1 seconde
+        setTimeout(() => {
+            document.getElementById('cartSidebar').classList.remove('open');
+            document.getElementById('overlay').style.display = 'none';
+        }, 1000);
+    }
+}
+
+// Bouton de commande normal
 document.getElementById('checkoutBtn')?.addEventListener('click',()=>{ 
-    if(panier.length===0) toastMsg('Panier vide'); 
-    else { 
+    if(panier.length===0) { 
+        toastMsg('Panier vide'); 
+    } else { 
         toastMsg('✅ Commande validée ! Un conseiller vous contactera sous 24h.'); 
         panier=[]; 
         sauvegarderPanier(); 
@@ -199,39 +264,65 @@ document.getElementById('checkoutBtn')?.addEventListener('click',()=>{
     } 
 });
 
-// Bouton WhatsApp - envoie directement le récapitulatif
-document.getElementById('whatsappOrderBtn')?.addEventListener('click',()=>{
-    if(panier.length===0) { toastMsg('Panier vide'); return; }
-    const message = genererMessageWhatsApp();
-    if(message) {
-        const numeroWhatsApp = "261341234567"; // Numéro du vendeur (sans le +)
-        const url = `https://wa.me/${numeroWhatsApp}?text=${message}`;
-        window.open(url, '_blank');
-        toastMsg('Redirection vers WhatsApp...');
-        // Optionnel : vider le panier après envoi ?
-        // panier = []; sauvegarderPanier();
-        // document.getElementById('cartSidebar').classList.remove('open');
-        // document.getElementById('overlay').style.display='none';
-    }
-});
+// Bouton WhatsApp - CORRIGÉ
+document.getElementById('whatsappOrderBtn')?.addEventListener('click', commanderViaWhatsApp);
 
 // Navigation
-const pages = { accueil:document.getElementById('accueil'), produits:document.getElementById('produits'), offre:document.getElementById('offre'), apropos:document.getElementById('apropos'), contact:document.getElementById('contact') };
-function showPage(id) { Object.values(pages).forEach(p=>p.classList.remove('active-page')); pages[id].classList.add('active-page'); document.querySelectorAll('.nav-link').forEach(l=>{l.classList.toggle('active', l.dataset.page===id);}); if(id==='accueil') afficherHighlights(); if(id==='produits') afficherTous(); if(id==='offre') afficherOffres(); setTimeout(attacherEvents,20); }
+const pages = { 
+    accueil:document.getElementById('accueil'), 
+    produits:document.getElementById('produits'), 
+    offre:document.getElementById('offre'), 
+    apropos:document.getElementById('apropos'), 
+    contact:document.getElementById('contact') 
+};
+function showPage(id) { 
+    Object.values(pages).forEach(p=>p.classList.remove('active-page')); 
+    pages[id].classList.add('active-page'); 
+    document.querySelectorAll('.nav-link').forEach(l=>{l.classList.toggle('active', l.dataset.page===id);}); 
+    if(id==='accueil') afficherHighlights(); 
+    if(id==='produits') afficherTous(); 
+    if(id==='offre') afficherOffres(); 
+    setTimeout(attacherEvents,20); 
+}
 document.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',(e)=>{e.preventDefault(); showPage(l.dataset.page);}));
 document.getElementById('heroShopBtn')?.addEventListener('click',()=>showPage('produits'));
 document.getElementById('offreShopBtn')?.addEventListener('click',()=>showPage('produits'));
 
 // Panier UI
-document.getElementById('cartIcon').addEventListener('click',()=>{ document.getElementById('cartSidebar').classList.add('open'); document.getElementById('overlay').style.display='block'; });
-document.getElementById('closeCart').addEventListener('click',()=>{ document.getElementById('cartSidebar').classList.remove('open'); document.getElementById('overlay').style.display='none'; });
-document.getElementById('overlay').addEventListener('click',()=>{ document.getElementById('cartSidebar').classList.remove('open'); document.getElementById('overlay').style.display='none'; });
+document.getElementById('cartIcon').addEventListener('click',()=>{ 
+    document.getElementById('cartSidebar').classList.add('open'); 
+    document.getElementById('overlay').style.display='block'; 
+});
+document.getElementById('closeCart').addEventListener('click',()=>{ 
+    document.getElementById('cartSidebar').classList.remove('open'); 
+    document.getElementById('overlay').style.display='none'; 
+});
+document.getElementById('overlay').addEventListener('click',()=>{ 
+    document.getElementById('cartSidebar').classList.remove('open'); 
+    document.getElementById('overlay').style.display='none'; 
+});
 
 // Contact formulaire
-document.getElementById('contactForm')?.addEventListener('submit',(e)=>{ e.preventDefault(); const n=document.getElementById('nom').value.trim(), em=document.getElementById('email').value.trim(), msg=document.getElementById('message').value.trim(); if(!n||!em||!msg) toastMsg('Tous les champs requis'); else if(!em.includes('@')) toastMsg('Email invalide'); else { toastMsg(`Merci ${n} ! Réponse sous 24h.`); e.target.reset(); } });
+document.getElementById('contactForm')?.addEventListener('submit',(e)=>{ 
+    e.preventDefault(); 
+    const n=document.getElementById('nom').value.trim(), 
+          em=document.getElementById('email').value.trim(), 
+          msg=document.getElementById('message').value.trim(); 
+    if(!n||!em||!msg) toastMsg('Tous les champs requis'); 
+    else if(!em.includes('@')) toastMsg('Email invalide'); 
+    else { 
+        toastMsg(`Merci ${n} ! Réponse sous 24h.`); 
+        e.target.reset(); 
+    } 
+});
 
 // Init
-afficherHighlights(); afficherTous(); afficherOffres(); attacherEvents(); miseAJourAffichagePanier(); miseAJourCompteur();
+afficherHighlights(); 
+afficherTous(); 
+afficherOffres(); 
+attacherEvents(); 
+miseAJourAffichagePanier(); 
+miseAJourCompteur();
 </script>
 </body>
 </html>
